@@ -12,25 +12,17 @@ NSData *boolFalse() {
 
 // Handlers
 void handleOnlineStatus(MTRequest *request, NSData *payload) {
-    // 检查payload长度
-    if (payload.length < 8) {
-        return;
-    }
-    
-    // 在 account.updateStatus 请求中，离线状态参数在第4-8字节
-    NSData *offlineData = [payload subdataWithRange:NSMakeRange(4, 4)];
-    uint32_t offlineValue = 0;
-    [offlineData getBytes:&offlineValue length:4];
-    
-    // 记录调试信息
-    customLog2(@"在线状态更新请求: offlineValue=%u", offlineValue);
-    
-    // 如果用户设置了禁用在线状态
-    if ([[NSUserDefaults standardUserDefaults] boolForKey:kDisableOnlineStatus]) {
-        // 返回假数据，使请求看起来成功但不实际更新状态
-        request.fakeData = boolTrue();
-        customLog2(@"已拦截在线状态更新请求");
-    }
+	
+	NSData *isOfflineData = [payload subdataWithRange:NSMakeRange(payload.length - 4, 4)];
+	uint32_t isOffline = 0;
+	[isOfflineData getBytes:&isOffline length:4];
+	
+	if (isOffline == 3162085175) { // Online (BOOL false)
+		if ([[NSUserDefaults standardUserDefaults] boolForKey:kDisableOnlineStatus]) {
+			request.fakeData = boolTrue();
+		}
+	}
+	
 }
 
 void read_Input_Peer(NSData *data, int *offset) {
