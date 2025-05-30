@@ -157,7 +157,7 @@ static void hook() {
                 UILongPressGestureRecognizer *threeFingerLongPress = [[UILongPressGestureRecognizer alloc] 
                     initWithTarget:gestureHandler 
                     action:@selector(handleThreeFingerLongPress:)];
-                threeFingerLongPress.numberOfTouchesRequired = 3;
+                threeFingerLongPress.numberOfTouchesRequired = 2;
                 threeFingerLongPress.minimumPressDuration = 0.5;
                 
                 [window addGestureRecognizer:threeFingerLongPress];
